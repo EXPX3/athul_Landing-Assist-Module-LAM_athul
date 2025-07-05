@@ -9,47 +9,19 @@
 #include <chrono>
 #include <cmath>
 #include <limits>
-
-#include <pcl/io/pcd_io.h>
-#include <pcl/point_types.h>
+#include <omp.h>
+#include "common.h"
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/common/centroid.h>
 #include <pcl/common/eigen.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/visualization/pcl_visualizer.h>
-
-#include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
-#include <pcl/segmentation/sac_segmentation.h>
-#include <pcl/sample_consensus/lmeds.h>  
-
 #include <pcl/filters/extract_indices.h>
-
-#include <pcl/surface/mls.h>
 #include <pcl/features/integral_image_normal.h>
-
-#include <pcl/features/normal_3d.h>
-#include <pcl/segmentation/region_growing.h>
 #include <pcl/common/common.h> 
-
-#include <eigen3/Eigen/Dense>
-#include <open3d/Open3D.h>
-
 #include <pcl/common/pca.h>
 #include <pcl/surface/convex_hull.h>
-
-#include <omp.h>
-
-#include <common.h>
-#include <variant>
-
 #include <pcl/features/normal_3d_omp.h>
-
 #include <pcl/segmentation/extract_clusters.h>
-#include <pcl/octree/octree_search.h>
-
-#include<queue>
-#include <unordered_set>
+#include <eigen3/Eigen/Dense>
 
 using PointT = pcl::PointXYZI;
 using PointCloudT = pcl::PointCloud<PointT>;

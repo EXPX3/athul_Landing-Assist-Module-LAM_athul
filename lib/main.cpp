@@ -1,13 +1,10 @@
-#include <iostream>
-#include <string>
+
 #include <vector>
 #include "yaml-cpp/yaml.h"
-#include <pcl/io/pcd_io.h>
+#include "common.h"
 #include "hazard_metrices.h"
 #include "pointcloud_preprocessing.h"
-#include "common.h"
 #include "architecture.h"
-#include <chrono>
 
 using PointT = pcl::PointXYZI;
 

@@ -8,6 +8,7 @@
 #include <chrono>
 #include <cmath>
 #include <limits>
+#include <variant>
 
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
@@ -17,7 +18,6 @@
 #include <open3d/Open3D.h>
 
 
-#include <variant>
 
 using PointT = pcl::PointXYZI;
 using PointCloudT = pcl::PointCloud<PointT>;

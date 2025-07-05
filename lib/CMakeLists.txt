@@ -16,11 +16,6 @@ message(STATUS "PCL_VERSION: ${PCL_VERSION}")
 include_directories(${PCL_INCLUDE_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
-find_package(octomap REQUIRED)  # Sets OCTOMAP_INCLUDE_DIRS & OCTOMAP_LIBRARIES
-include_directories(${OCTOMAP_INCLUDE_DIRS})
-
-# Set include directories relative to the current CMakeLists.txt location.
-#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../common)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include/
@@ -58,54 +53,11 @@ set(CMAKE_EXE_LINKER_FLAGS
 # ----------------------------------------------------------------------------
 # 5. Create the executables
 # ----------------------------------------------------------------------------
-add_executable(test_hazard_metrices test/test_hazard_metrices.cpp)
-add_executable(test_pointcloud_preprocessing test/test_pointcloud_preprocessing.cpp)
 add_executable(main main.cpp)
 
 # ----------------------------------------------------------------------------
 # 6. Link libraries
 # ----------------------------------------------------------------------------
-
-target_link_libraries(test_hazard_metrices 
-    PRIVATE
-    ${PCL_LIBRARIES} 
-    Open3D::Open3D 
-    octomap 
-    gtest 
-    gtest_main
-    GL                       # -lGL
-    GLU                      # -lGLU
-    glfw                     # -lglfw
-    GLEW                     # -lGLEW
-    assimp                   # -lassimp
-    jsoncpp                 # -ljsoncpp
-    jpeg                     # -ljpeg
-    png                      # -lpng
-    z                        # -lz
-    pthread                  # -lpthread
-    ${VTK_LIBRARIES}         # Link VTK libraries here as well
-)
-
-
-target_link_libraries(test_pointcloud_preprocessing 
-    ${PCL_LIBRARIES} 
-    Open3D::Open3D 
-    octomap 
-    gtest 
-    gtest_main
-    GL                     # -lGL
-    GLU                    # -lGLU
-    glfw                   # -lglfw
-    GLEW                   # -lGLEW
-    assimp                 # -lassimp
-    jsoncpp               # -ljsoncpp
-    jpeg                   # -ljpeg
-    png                    # -lpng
-    z                      # -lz
-    pthread                # -lpthread
-)
-
-
 
 # Link libraries.
 target_link_libraries(main
