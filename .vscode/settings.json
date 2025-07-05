@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "dense": "cpp",
-        "variant": "cpp",
-        "queue": "cpp",
-        "unordered_set": "cpp"
-    }
-}
