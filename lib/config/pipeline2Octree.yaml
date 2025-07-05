@@ -15,22 +15,6 @@ ros__parameters:
         nb_neighbors: 20
         std_ratio: 2.0
         visualization: "both"
-    - step: "Radial"
-      enabled: false
-      parameters:
-        radius_search: 0.9
-        min_neighbors: 50
-        visualization: "both"
-    - step: "Bilateral"
-      enabled: false
-      parameters:
-        sigma_s: 15
-        sigma_r: 0.3
-        visualization: "both"
-    - step: "2dGridmap"
-      enabled: false
-      parameters:
-        resolution: 0.1
     - step: "SphericalNeighbourhood"
       enabled: true
       parameters:

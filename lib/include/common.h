@@ -25,8 +25,6 @@ using PointCloudT = pcl::PointCloud<PointT>;
 template <typename PointT>
 using CloudInput = std::variant<std::string, typename pcl::PointCloud<PointT>::Ptr>;
 
-using Open3DCloudInput = std::variant<std::string, std::shared_ptr<open3d::geometry::PointCloud>>;
-
 
 
 //======================================STRUCT TO HOLD PCL RESULT ============================================
@@ -46,7 +44,6 @@ struct PCLResult {
       Eigen::Vector4d plane_coefficients;  // To store the plane model: [a, b, c, d]
   };
 //======================================STRUCT TO HOLD CANDIDATE POINTS ============================================
-
 struct SLZDCandidatePoints {
     pcl::PointXYZ seedPoint;  // A single seed point used to calculate the circle plane
     std::shared_ptr<pcl::PointCloud<PointT>> detectedSurface;  // Single detected surface, represented as a point cloud
@@ -63,7 +60,6 @@ struct SLZDCandidatePoints {
         // Nothing to initialize as the struct contains single values now
     }
 };
-
 
 //===================================Function to convert OPEN3D to PCL ==============================================
 inline PCLResult convertOpen3DToPCL(const OPEN3DResult &open3d_result) {
@@ -132,7 +128,6 @@ inline PCLResult convertOpen3DToPCL(const OPEN3DResult &open3d_result) {
 }
 
 // ========================Function to convert PCL into OPEN3D =============================================
-
 inline OPEN3DResult convertPCLToOpen3D(const PCLResult &pcl_result) {
     OPEN3DResult open3d_result;
     
@@ -176,17 +171,6 @@ inline OPEN3DResult convertPCLToOpen3D(const PCLResult &pcl_result) {
     return open3d_result;
 }
 
-
-//====================== Helper function to downsample open3d point cloud==================================
-inline std::shared_ptr<open3d::geometry::PointCloud> downSamplePointCloudOpen3d(
-    const std::shared_ptr<open3d::geometry::PointCloud>& pcd, double voxelSize) {
-    
-    auto downsampled_pcd = pcd->VoxelDownSample(voxelSize);
-    std::cout << "Downsampled point cloud has " 
-              << downsampled_pcd->points_.size() << " points." << std::endl;
-    return downsampled_pcd;
-}
-
 //====================== Helper function to downsample the point cloud. PCL =================================
 template <typename PointT>
 inline void downsamplePointCloudPCL(const typename pcl::PointCloud<PointT>::Ptr &input_cloud,
@@ -198,7 +182,6 @@ inline void downsamplePointCloudPCL(const typename pcl::PointCloud<PointT>::Ptr 
     vg.setLeafSize(voxelSize, voxelSize, voxelSize);
     vg.filter(*output_cloud);
 }
-
 //=====================================Helper function to load file path or pointcloud ========================
 // Helper function to load the point cloud and return both the cloud and the flag.
 template <typename PointT>
@@ -224,28 +207,9 @@ inline typename pcl::PointCloud<PointT>::Ptr loadPCLCloud(const CloudInput<Point
     return cloud;
 }
 
-// ======================= Helper function to load an Open3D point cloud from either a file or a provided pointer. =================s
-inline std::shared_ptr<open3d::geometry::PointCloud> loadOpen3DCloud(const Open3DCloudInput &input) {
-    auto cloud = std::make_shared<open3d::geometry::PointCloud>();
-
-    if (std::holds_alternative<std::string>(input)) {
-        std::string file_path = std::get<std::string>(input);
-        if (!open3d::io::ReadPointCloud(file_path, *cloud)) {
-            std::cerr << "Failed to load point cloud from " << file_path << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        std::cout << "Loaded Open3D cloud with " << cloud->points_.size() << " points." << std::endl;
-    } else {
-        cloud = std::get<std::shared_ptr<open3d::geometry::PointCloud>>(input);
-        std::cout << "Using provided Open3D cloud with " << cloud->points_.size() << " points." << std::endl;
-    }
-    return cloud;
-}
-
 
 
 //====================================== VISUALIZATION PCL =======================================================================
-
 inline void visualizePCL(const PCLResult &result, const std::string& cloud = "both")
 {
   // Create a visualizer object.
@@ -275,35 +239,6 @@ inline void visualizePCL(const PCLResult &result, const std::string& cloud = "bo
     viewer->spinOnce(100);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
-}
-
-//====================================================== VISULAIZE OPEN3D =====================================================================================
-
-// Visualization function for RANSAC plane segmentation result.
-inline void visualizeOPEN3D(const OPEN3DResult& result,const std::string& cloud = "both") {
-    // Clone the point clouds to avoid modifying the originals.
-    auto inlier_cloud = std::make_shared<open3d::geometry::PointCloud>(*result.inlier_cloud);
-    auto outlier_cloud = std::make_shared<open3d::geometry::PointCloud>(*result.outlier_cloud);
-
-    // Set the colors: inliers to green and outliers to red.
-    inlier_cloud->PaintUniformColor(Eigen::Vector3d(0.0, 1.0, 0.0)); // Green
-    outlier_cloud->PaintUniformColor(Eigen::Vector3d(1.0, 0.0, 0.0)); // Red
-
-    // Combine the point clouds into a vector for visualization.
-    std::vector<std::shared_ptr<const open3d::geometry::Geometry>> geometries;
-    // Add the outlier cloud (red) if available.
-    if (result.inlier_cloud && !result.inlier_cloud->IsEmpty() && (cloud == "inlier_cloud" || cloud == "both"))
-    {
-        geometries.push_back(inlier_cloud);
-    }
-     // Add the inlier cloud (green) if available.
-    if (result.outlier_cloud && !result.outlier_cloud->IsEmpty() && (cloud == "outlier_cloud" || cloud == "both")){
-        geometries.push_back(outlier_cloud);
-    }
-    
-
-    // Launch the visualizer.
-    open3d::visualization::DrawGeometries(geometries, result.open3d_method + " OPEN3D  Result", 800, 600);
 }
 
 #endif 
